@@ -39,9 +39,7 @@ a {
 }
 
 a:hover {
-    color: darken(var(--primary-color), 10%); /* CSS 변수에는 darken 함수 직접 사용 불가, Sass/Less에서 가능 */
-    /* 대안: */
-    color: #003f80;
+    color: #003f80; /* darken(var(--primary-color), 10%) 대신 직접 색상 지정 */
 }
 
 h1, h2, h3, h4 {
@@ -252,12 +250,17 @@ img {
 
 .paper-list,
 .patent-list {
-    display: grid;
+    display: grid; /* 기본적으로 grid 레이아웃 */
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 25px;
     margin-bottom: 20px;
-    transition: all 0.5s ease-in-out; /* 펼치기 애니메이션 */
-    overflow: hidden; /* 초기 숨김을 위해 */
+    transition: all 0.5s ease-in-out;
+    overflow: hidden;
+}
+
+/* 초기에 숨겨진 아이템을 위한 스타일 */
+.hidden-item {
+    display: none; /* JavaScript로 제어 */
 }
 
 .paper-item,
@@ -267,9 +270,9 @@ img {
     border-radius: 8px;
     box-shadow: var(--box-shadow);
     transition: transform var(--transition-speed);
-    display: flex;
+    display: flex; /* 논문/특허 아이템 내부를 flex로 */
     flex-direction: column;
-    justify-content: space-between; /* 내용이 위아래로 잘 정렬되도록 */
+    justify-content: space-between;
 }
 
 .paper-item:hover,
@@ -304,12 +307,24 @@ img {
     margin-bottom: 10px;
 }
 
-
-/* "더 보기" 기능 관련 */
-.hidden-item {
-    display: none; /* JavaScript로 제어 */
+/* PDF 다운로드 링크 스타일 */
+.paper-item .download-link {
+    display: block;
+    margin-top: 15px;
+    padding: 8px 15px;
+    background-color: var(--primary-color);
+    color: var(--white);
+    text-align: center;
+    border-radius: 5px;
+    transition: background-color var(--transition-speed);
 }
 
+.paper-item .download-link:hover {
+    background-color: #003f80;
+}
+
+
+/* "더 보기" 기능 관련 */
 .more-btn {
     display: block;
     width: fit-content;
@@ -453,15 +468,6 @@ img {
 
     .main-nav.active {
         display: block; /* 활성화 시 보임 */
-    }
-
-    .main-nav ul {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .main-nav ul li {
-        margin: 10px 0;
     }
 
     .nav-toggle {
