@@ -350,6 +350,7 @@ img {
 
 .news-list {
     display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* 1열에 4개씩 표기 */
     gap: 25px;
 }
 
@@ -493,11 +494,13 @@ img {
         font-size: 1.8em;
     }
 
+    /* 모바일에서 모든 갤러리를 1열로 강제 */
     .research-grid,
     .paper-list,
     .patent-list,
+    .news-list, /* 소식 섹션도 1열로 */
     .photo-grid {
-        grid-template-columns: 1fr; /* 모바일에서는 1열로 변경 */
+        grid-template-columns: 1fr;
     }
 
     .section-padding {
