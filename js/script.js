@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    const initialVisibleCount = 4; // 초기 표시할 항목 수 (각 연도별 또는 섹션별)
+    const initialVisibleCount = 5; // 초기 표시할 항목 수 (각 연도별 또는 섹션별)
 
     // CSV 파일을 파싱하는 함수
     async function parseCSV(url) {
@@ -169,22 +169,76 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
 
-    // 섹션별 초기 항목 숨김 및 "더 보기" 버튼 상태 설정 함수
-    // 이 함수는 초기 로드 시 및 '더 보기' 버튼 클릭 후에도 호출되어야 함.
-    // DOM에 동적으로 추가된 요소들을 포함하여 처리합니다.
-    function setupInitialVisibility() {
-        console.log("[초기 가시성 설정] 시작.");
 
-        // 논문, 특허, 사진 섹션 (연도별로 '더 보기' 버튼이 있는 경우)
-        document.querySelectorAll('.paper-list, .patent-list, .photo-grid').forEach(listElement => {
-            const items = listElement.querySelectorAll(
-                listElement.classList.contains('paper-list') ? '.paper-item' :
-                listElement.classList.contains('patent-list') ? '.patent-item' : 'img' // photo-grid
-            );
-            
+
+     // 변경됨: 섹션별 초기 항목 숨김 및 "더 보기" 버튼 상태 설정 함수
+    function applySectionVisibilityRules() {
+        console.log("[전체 섹션 가시성 규칙 적용] 시작.");
+
+        // --- 논문 섹션 특정 로직 ---
+        const paperGallery = document.getElementById('paperGallery');
+        if (paperGallery) {
+            const allPaperLists = Array.from(paperGallery.querySelectorAll('.paper-list'));
+            if (allPaperLists.length > 0) {
+                // 가장 최신 연도 확인 (renderPapers가 연도별로 정렬하여 첫 번째가 최신)
+                const latestYearElement = allPaperLists[0]; 
+                const latestYear = latestYearElement.dataset.year;
+
+                allPaperLists.forEach((listElement, index) => {
+                    const items = listElement.querySelectorAll('.paper-item');
+                    const year = listElement.dataset.year;
+                    const moreButton = document.querySelector(`.more-btn[data-year="${year}"][data-target="papers"]`);
+                    const yearHeading = listElement.previousElementSibling; // 연도 제목 (h3)
+
+                    if (year === latestYear) {
+                        // 최신 연도: 초기 3개만 보이고, 나머지는 숨기기, 해당 연도의 "더 보기" 버튼 보이기
+                        items.forEach((item, itemIndex) => {
+                            if (itemIndex >= initialVisibleCount) {
+                                item.classList.add('hidden-item');
+                            } else {
+                                item.classList.remove('hidden-item');
+                            }
+                        });
+                        if (moreButton) {
+                            moreButton.style.display = (items.length > initialVisibleCount) ? 'block' : 'none';
+                            moreButton.textContent = '더 보기';
+                            moreButton.dataset.status = 'collapsed';
+                        }
+                        listElement.classList.remove('hidden-year'); // 최신 연도는 보이도록
+                        if (yearHeading && yearHeading.tagName === 'H3') {
+                            yearHeading.classList.remove('hidden-year'); // 최신 연도의 h3도 보이도록
+                        }
+                    } else {
+                        // 이전 연도: 해당 연도 섹션 전체 숨기기, "더 보기" 버튼 숨기기
+                        listElement.classList.add('hidden-year');
+                        if (yearHeading && yearHeading.tagName === 'H3') {
+                             yearHeading.classList.add('hidden-year');
+                        }
+                        if (moreButton) {
+                            moreButton.style.display = 'none';
+                        }
+                    }
+                });
+
+                // "모든 연도 보기" 버튼 설정
+                const toggleAllYearsPapersBtn = document.getElementById('toggleAllYearsPapersBtn');
+                if (toggleAllYearsPapersBtn) {
+                    if (allPaperLists.length > 1) { // 2개 이상의 연도가 있을 때만 버튼 표시
+                        toggleAllYearsPapersBtn.style.display = 'block';
+                        toggleAllYearsPapersBtn.textContent = '모든 연도 보기';
+                        toggleAllYearsPapersBtn.dataset.status = 'collapsed';
+                    } else {
+                        toggleAllYearsPapersBtn.style.display = 'none'; // 최신 연도만 있을 경우 숨김
+                    }
+                }
+            }
+        }
+
+        // --- 특허 섹션 로직 (이전과 동일하게 각 연도별 3개 표시) ---
+        document.querySelectorAll('.patent-list').forEach(listElement => {
+            const items = listElement.querySelectorAll('.patent-item');
             const year = listElement.dataset.year;
-            const targetType = listElement.dataset.target;
-            const moreButton = document.querySelector(`.more-btn[data-year="${year}"][data-target="${targetType}"]`);
+            const moreButton = document.querySelector(`.more-btn[data-year="${year}"][data-target="patents"]`);
 
             if (!moreButton) return;
 
@@ -200,7 +254,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-        // 소식 섹션 (연도 구분이 없는 경우)
+        // --- 소식 섹션 로직 (이전과 동일) ---
         const newsList = document.querySelector('.news-list[data-section="news"]');
         const newsMoreButton = document.querySelector('.more-btn[data-target="news"][data-section-id="news"]');
         if (newsList && newsMoreButton) {
@@ -216,18 +270,38 @@ document.addEventListener('DOMContentLoaded', async () => {
                 newsMoreButton.style.display = 'none';
             }
         }
-        console.log("[초기 가시성 설정] 완료.");
+
+        // --- 사진 섹션 로직 (이전과 동일) ---
+        document.querySelectorAll('.photo-grid').forEach(listElement => {
+            const items = listElement.querySelectorAll('img');
+            const year = listElement.dataset.year;
+            const moreButton = document.querySelector(`.more-btn[data-year="${year}"][data-target="photos"]`);
+
+            if (!moreButton) return;
+
+            if (items.length > initialVisibleCount) {
+                for (let i = initialVisibleCount; i < items.length; i++) {
+                    items[i].classList.add('hidden-item');
+                }
+                moreButton.style.display = 'block';
+                moreButton.textContent = '더 보기';
+                moreButton.dataset.status = 'collapsed';
+            } else {
+                moreButton.style.display = 'none';
+            }
+        });
+        console.log("[전체 섹션 가시성 규칙 적용] 완료.");
     }
 
 
-    // "더 보기" 버튼 클릭 이벤트 핸들러 (이벤트 위임 방식으로 개선)
-    // 부모 요소에 이벤트를 걸고 실제 클릭된 자식 요소를 확인하는 방식
+    // "더 보기" 버튼 클릭 이벤트 핸들러 (이벤트 위임 방식)
+    // 변경됨: 'toggleAllYearsPapersBtn'은 제외하고 개별 연도/섹션 버튼만 처리
     document.addEventListener('click', (event) => {
-        if (event.target.classList.contains('more-btn')) {
+        if (event.target.classList.contains('more-btn') && event.target.id !== 'toggleAllYearsPapersBtn') {
             const button = event.target;
             const year = button.dataset.year;
             const targetType = button.dataset.target;
-            const sectionId = button.dataset.sectionId || targetType; // news 섹션을 위한 data-section-id 사용
+            const sectionId = button.dataset.sectionId || targetType; // 소식 섹션 처리를 위해 추가
 
             let targetListElement;
             if (targetType === 'papers') {
@@ -248,18 +322,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             const items = targetListElement.querySelectorAll(
                 targetType === 'papers' ? '.paper-item' :
                 targetType === 'patents' ? '.patent-item' :
-                targetType === 'news' ? '.news-item' : 'img' // photos
+                targetType === 'news' ? '.news-item' : 'img'
             );
 
             let isShowingAll = button.dataset.status === 'expanded';
 
-            if (isShowingAll) { // 현재 확장 상태이면 접기
+            if (isShowingAll) { // 현재 확장된 상태면 축소
                 for (let i = initialVisibleCount; i < items.length; i++) {
                     items[i].classList.add('hidden-item');
                 }
                 button.textContent = '더 보기';
                 button.dataset.status = 'collapsed';
-            } else { // 현재 접힘 상태이면 확장
+            } else { // 현재 축소된 상태면 확장
                 items.forEach(item => {
                     item.classList.remove('hidden-item');
                 });
@@ -267,7 +341,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 button.dataset.status = 'expanded';
             }
 
-            // 스크롤 이동
+            // 확장 시 해당 섹션 상단으로 스크롤
             if (button.dataset.status === 'expanded') {
                 const targetSection = document.getElementById(sectionId);
                 if (targetSection) {
@@ -277,19 +351,91 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // 스크롤 시 헤더 그림자 효과
-    const header = document.querySelector('.main-header');
-    if (header) {
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                header.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+    // 변경됨: "모든 연도 보기" 버튼 (논문 섹션 전용) 클릭 이벤트 핸들러
+    const toggleAllYearsPapersBtn = document.getElementById('toggleAllYearsPapersBtn');
+    if (toggleAllYearsPapersBtn) {
+        toggleAllYearsPapersBtn.addEventListener('click', () => {
+            const paperGallery = document.getElementById('paperGallery');
+            const allPaperLists = Array.from(paperGallery.querySelectorAll('.paper-list'));
+            
+            if (allPaperLists.length === 0) return;
+
+            let isShowingAllYears = toggleAllYearsPapersBtn.dataset.status === 'expanded';
+
+            allPaperLists.forEach((listElement, index) => {
+                const yearHeading = listElement.previousElementSibling; // 해당 연도의 h3
+                const moreButton = document.querySelector(`.more-btn[data-year="${listElement.dataset.year}"][data-target="papers"]`);
+                const items = listElement.querySelectorAll('.paper-item');
+
+                if (index === 0) { // 최신 연도 (항상 첫 번째)
+                    if (isShowingAllYears) { // '최신 연도만 보기'로 전환 시 (원래 모두 보였을 때)
+                        // 최신 연도를 3개만 보이도록 되돌림
+                        items.forEach((item, itemIndex) => {
+                            if (itemIndex >= initialVisibleCount) {
+                                item.classList.add('hidden-item');
+                            }
+                        });
+                        if (moreButton) {
+                            moreButton.style.display = (items.length > initialVisibleCount) ? 'block' : 'none';
+                            moreButton.textContent = '더 보기';
+                            moreButton.dataset.status = 'collapsed';
+                        }
+                    } else { // '모든 연도 보기'로 전환 시 (원래 최신 연도만 보였을 때)
+                        // 최신 연도의 모든 논문을 보이도록 함
+                        items.forEach(item => item.classList.remove('hidden-item'));
+                        if (moreButton) {
+                            moreButton.textContent = '접기';
+                            moreButton.dataset.status = 'expanded';
+                        }
+                    }
+                } else { // 이전 연도들
+                    if (isShowingAllYears) { // '최신 연도만 보기'로 전환 시 (원래 모두 보였을 때)
+                        listElement.classList.add('hidden-year'); // 연도 섹션 숨기기
+                        if (yearHeading && yearHeading.tagName === 'H3') {
+                            yearHeading.classList.add('hidden-year');
+                        }
+                        if (moreButton) {
+                            moreButton.style.display = 'none'; // 해당 연도의 "더 보기" 버튼 숨기기
+                        }
+                    } else { // '모든 연도 보기'로 전환 시 (원래 이전 연도들이 숨겨져 있었을 때)
+                        listElement.classList.remove('hidden-year'); // 연도 섹션 보이기
+                        if (yearHeading && yearHeading.tagName === 'H3') {
+                            yearHeading.classList.remove('hidden-year');
+                        }
+                        // 이전 연도도 초기 3개만 보이고 "더 보기" 버튼 표시
+                        items.forEach((item, itemIndex) => {
+                            if (itemIndex >= initialVisibleCount) {
+                                item.classList.add('hidden-item');
+                            } else {
+                                item.classList.remove('hidden-item');
+                            }
+                        });
+                        if (moreButton) {
+                            moreButton.style.display = (items.length > initialVisibleCount) ? 'block' : 'none';
+                            moreButton.textContent = '더 보기';
+                            moreButton.dataset.status = 'collapsed';
+                        }
+                    }
+                }
+            });
+
+            // 메인 "모든 연도 보기" 버튼의 텍스트와 상태 토글
+            if (isShowingAllYears) {
+                toggleAllYearsPapersBtn.textContent = '모든 연도 보기';
+                toggleAllYearsPapersBtn.dataset.status = 'collapsed';
             } else {
-                header.style.boxShadow = 'var(--box-shadow)';
+                toggleAllYearsPapersBtn.textContent = '최신 연도만 보기';
+                toggleAllYearsPapersBtn.dataset.status = 'expanded';
             }
+
+            // 논문 섹션 상단으로 스크롤
+            document.getElementById('papers').scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
     }
 
-    // --- 초기 데이터 로드 및 UI 설정 실행 ---
+    // ... (기존 헤더 스크롤 그림자 효과 로직) ...
+
+    // --- 초기 데이터 로딩 및 UI 설정 실행 ---
     try {
         const papersData = await parseCSV('data/papers.csv');
         renderPapers(papersData, 'paperGallery');
@@ -297,11 +443,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         const patentsData = await parseCSV('data/patents.csv');
         renderPatents(patentsData, 'patentGallery');
         
-        // CSV 로드 후 동적으로 생성된 요소들과 기존 요소들에 대해 초기 가시성 설정
-        // 이 함수는 모든 콘텐츠가 DOM에 로드된 후에 실행되어야 합니다.
-        setupInitialVisibility();
+        // CSV 데이터 로드 및 렌더링 후, 모든 섹션의 초기 가시성 설정 적용.
+        // 변경됨: 함수 이름이 setupInitialVisibility 에서 applySectionVisibilityRules 로 변경됨
+        applySectionVisibilityRules(); 
 
     } catch (error) {
-        console.error("페이지 초기화 중 오류가 발생했습니다:", error);
+        console.error("페이지 초기화 중 오류 발생:", error);
     }
 });
