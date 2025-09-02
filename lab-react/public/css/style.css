@@ -1,0 +1,548 @@
+/* css/style.css */
+
+/* Basic styles and font settings */
+:root {
+    --primary-color: #0056b3; /* Main color (dark blue) */
+    --secondary-color: #e9ecef; /* Secondary color (light gray) */
+    --text-color: #333; /* Default text color */
+    --light-text-color: #666; /* Lighter text color */
+    --white: #fff;
+    --border-color: #ddd;
+    --box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    --transition-speed: 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--white);
+    scroll-behavior: smooth;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color var(--transition-speed);
+}
+
+a:hover {
+    color: #003f80; /* Darker shade of primary-color on hover */
+}
+
+h1, h2, h3, h4 {
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+h2 {
+    font-size: 2.2em;
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+p {
+    margin-bottom: 10px;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+.section-padding {
+    padding: 80px 0;
+}
+
+/* Header */
+.main-header {
+    background-color: var(--white);
+    color: var(--text-color);
+    padding: 20px 0;
+    box-shadow: var(--box-shadow);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.main-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.8em;
+    margin: 0;
+}
+
+.logo a {
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+.main-nav ul {
+    list-style: none;
+    display: flex;
+}
+
+.main-nav ul li {
+    margin-left: 30px;
+}
+
+.main-nav ul li a {
+    font-weight: 400;
+    font-size: 1.1em;
+    padding: 5px 0;
+    position: relative;
+    transition: color var(--transition-speed);
+}
+
+.main-nav ul li a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--primary-color);
+    transition: width var(--transition-speed);
+}
+
+.main-nav ul li a:hover::after {
+    width: 100%;
+}
+
+.nav-toggle {
+    display: none; /* Hidden by default, visible only on mobile */
+    background: none;
+    border: none;
+    font-size: 1.8em;
+    cursor: pointer;
+    color: var(--primary-color);
+}
+
+/* Hero Section (Main Banner) */
+.hero-section {
+    background: url('../images/lab_hero_bg.jpg') no-repeat center center/cover;
+    color: var(--white);
+    text-align: center;
+    padding: 150px 20px;
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Overlay */
+    z-index: 1;
+}
+
+.hero-section .container {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-section h2 {
+    font-size: 3.5em;
+    margin-bottom: 20px;
+    color: var(--white);
+    line-height: 1.2;
+}
+
+.hero-section p {
+    font-size: 1.2em;
+    max-width: 800px;
+    margin: 0 auto 30px auto;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Research Introduction Section */
+.research-section {
+    background-color: var(--secondary-color);
+}
+
+.research-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.research-item {
+    background-color: var(--white);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: var(--box-shadow);
+    text-align: center;
+    transition: transform var(--transition-speed);
+}
+
+.research-item:hover {
+    transform: translateY(-5px);
+}
+
+.research-item img {
+    width: 100%; /* Set width to 100% to fit parent element */
+    height: 200px; /* Fixed height */
+    object-fit: cover; /* Image fills the area without distortion */
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.research-item h3 {
+    font-size: 1.6em;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.research-item p {
+    font-size: 0.95em;
+    color: var(--light-text-color);
+}
+
+.research-item .guide-text {
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 15px;
+    font-style: italic;
+}
+
+
+/* Common styles for Papers and Patents sections */
+.paper-gallery,
+.patent-gallery {
+    margin-top: 40px;
+}
+
+.paper-gallery h3,
+.patent-gallery h3 {
+    font-size: 1.8em;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 10px;
+    margin-top: 40px;
+    margin-bottom: 25px;
+    text-align: left;
+}
+
+.paper-list,
+.patent-list {
+    /* 기존: display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; */
+    /* 논문: 한 줄에 5편, 간격 좁힘 */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* minmax 값 조정 */
+    gap: 15px; /* 간격 좁힘 */
+    margin-bottom: 20px;
+    transition: all 0.5s ease-in-out;
+    overflow: hidden;
+}
+
+
+/* Style for initially hidden items */
+.hidden-item {
+    display: none; /* Controlled by JavaScript */
+}
+
+.paper-item,
+.patent-item {
+    background-color: var(--white);
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: var(--box-shadow);
+    transition: transform var(--transition-speed);
+    display: flex; /* Flexbox for internal layout of paper/patent items */
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.paper-item:hover,
+.patent-item:hover {
+    transform: translateY(-5px);
+}
+
+.paper-item img {
+    width: 100%;
+    height: 180px; /* Fixed height */
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.paper-item h4 {
+    font-size: 1.1em; /* 1.3em에서 1.1em으로 변경 */
+    margin-bottom: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* 2줄로 제한 */
+    -webkit-box-orient: vertical;
+}
+
+/* 추가됨: 전체 연도 섹션을 숨기기 위한 클래스 */
+.hidden-year {
+    display: none !important; /* 다른 display 속성보다 우선 적용 */
+}
+
+.paper-item p,
+.patent-item p {
+    font-size: 0.9em;
+    color: var(--light-text-color);
+    margin-bottom: 5px;
+}
+
+.patent-item h4 {
+    font-size: 1.3em;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+/* Style for PDF download link */
+.paper-item .download-link {
+    display: block;
+    margin-top: 15px;
+    padding: 8px 15px;
+    background-color: var(--primary-color);
+    color: var(--white);
+    text-align: center;
+    border: none; /* Add border:none for consistency */
+    border-radius: 5px;
+    transition: background-color var(--transition-speed);
+}
+
+.paper-item .download-link:hover {
+    background-color: #003f80;
+}
+
+
+/* "Show More" button style */
+.more-btn {
+    display: block;
+    width: fit-content;
+    margin: 30px auto 0;
+    padding: 12px 25px;
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color var(--transition-speed);
+}
+
+.more-btn:hover {
+    background-color: #003f80;
+}
+
+/* Latest News Section */
+.news-section {
+    background-color: var(--secondary-color);
+}
+
+.news-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* 4 items per row */
+    gap: 25px;
+}
+
+.news-item {
+    background-color: var(--white);
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: var(--box-shadow);
+    transition: transform var(--transition-speed);
+}
+
+.news-item:hover {
+    transform: translateY(-5px);
+}
+
+.news-item .news-date {
+    font-size: 0.85em;
+    color: var(--light-text-color);
+    margin-bottom: 5px;
+    display: block;
+}
+
+.news-item h3 {
+    font-size: 1.4em;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.news-item p {
+    font-size: 0.95em;
+    margin-bottom: 15px;
+}
+
+.news-item .read-more {
+    display: inline-block;
+    font-size: 0.9em;
+    font-weight: 700;
+}
+
+/* Photos Section */
+.photos-section {
+    background-color: var(--white);
+}
+
+.photo-gallery h3 {
+    font-size: 1.8em;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 10px;
+    margin-top: 40px;
+    margin-bottom: 25px;
+    text-align: left;
+}
+
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.photo-grid img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform var(--transition-speed);
+}
+
+.photo-grid img:hover {
+    transform: scale(1.03);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+
+/* Footer */
+.main-footer {
+    background-color: #333;
+    color: var(--white);
+    padding: 40px 0;
+    text-align: center;
+    font-size: 0.9em;
+}
+
+.main-footer p {
+    margin-bottom: 10px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.main-footer .social-links a {
+    color: var(--white);
+    margin: 0 10px;
+    font-size: 1.1em;
+    transition: color var(--transition-speed);
+}
+
+.main-footer .social-links a:hover {
+    color: var(--primary-color);
+}
+
+
+/* Responsive Web Design */
+@media (max-width: 768px) {
+    .main-header .container {
+        flex-wrap: wrap;
+        justify-content: center; /* Center logo and toggle button */
+    }
+
+    .main-nav {
+        order: 3; /* Move navigation to the bottom */
+        width: 100%;
+        margin-top: 15px;
+        display: none; /* Hidden initially */
+        text-align: center;
+    }
+
+    .main-nav.active {
+        display: block; /* Show when active */
+    }
+
+    .nav-toggle {
+        display: block; /* Show on mobile */
+        position: absolute;
+        right: 20px;
+        top: 25px;
+    }
+
+    .hero-section {
+        padding: 100px 20px;
+    }
+
+    .hero-section h2 {
+        font-size: 2.5em;
+    }
+
+    .hero-section p {
+        font-size: 1em;
+    }
+
+    h2 {
+        font-size: 1.8em;
+    }
+
+    /* Force all galleries to 1 column on mobile */
+    .research-grid,
+    /* .paper-list, <-- 5열 적용을 위해 여기서는 삭제 */
+    .patent-list,
+    .news-list, /* News section also 1 column */
+    .photo-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* paper-list는 768px 이하에서 2열로, 480px 이하에서 1열로 조정 */
+    .paper-list {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* 2열 이상으로 조정 */
+        gap: 20px;
+    }
+
+    .section-padding {
+        padding: 50px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo {
+        font-size: 1.5em;
+    }
+    .nav-toggle {
+        font-size: 1.5em;
+    }
+    .hero-section h2 {
+        font-size: 2em;
+    }
+    .research-item, .paper-item, .patent-item, .news-item {
+        padding: 20px;
+    }
+    /* paper-list는 480px 이하에서 1열로 조정 */
+    .paper-list {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+}
